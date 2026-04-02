@@ -18,7 +18,7 @@
     @php($cartItems = auth()->check() ? collect(auth()->user()?->cart_items ?? []) : collect())
     @php($cartCount = $cartItems->count())
     <div class="min-h-screen flex flex-col">
-        <header class="bg-white border-b border-slate-100">
+        <header class="sticky top-0 z-40 bg-white border-b border-slate-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between py-4 gap-6">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-semibold tracking-tight">
@@ -28,8 +28,8 @@
                     <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
                         <a href="{{ route('home') }}" class="hover:text-slate-900">Trang chủ</a>
                         <a href="{{ route('products.index') }}" class="hover:text-slate-900">Sản phẩm</a>
-                        <a href="#trending" class="hover:text-slate-900">Xu hướng</a>
-                        <a href="#sale" class="hover:text-slate-900">Khuyến mãi</a>
+                        <a href="{{ route('pages.about') }}" class="hover:text-slate-900">Giới thiệu</a>
+                        <a href="{{ route('pages.contact') }}" class="hover:text-slate-900">Liên hệ</a>
                     </nav>
                     <div class="flex items-center gap-4 text-sm font-medium">
                         <a href="{{ route('cart.index') }}" class="relative inline-flex items-center gap-2">
@@ -108,6 +108,10 @@
                 </div>
             </div>
         </footer>
+
+        <button type="button" class="fixed bottom-6 right-6 z-40 hidden h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-white shadow-sm" data-back-to-top aria-label="Lên đầu trang">
+            <span aria-hidden="true" class="text-xl">↑</span>
+        </button>
     </div>
 
     <div id="product-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 px-4 py-4 backdrop-blur-sm">
@@ -160,6 +164,27 @@
     </div>
 
     @stack('scripts')
+    <script>
+        (() => {
+            const button = document.querySelector('[data-back-to-top]');
+            if (!button) {
+                return;
+            }
+
+            const toggleVisibility = () => {
+                const shouldShow = window.scrollY > 600;
+                button.classList.toggle('hidden', !shouldShow);
+                button.classList.toggle('inline-flex', shouldShow);
+            };
+
+            toggleVisibility();
+            window.addEventListener('scroll', toggleVisibility, { passive: true });
+
+            button.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        })();
+    </script>
 </body>
 
 </html>

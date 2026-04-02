@@ -8,7 +8,7 @@
 
         $heroBackground = $heroBanner? Storage::url($heroBanner->image_path) : null;
     @endphp
-<section class="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white"
+<section class="bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 text-white"
 @if ($heroBackground)
 style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41,59,0.85)), url('{{ $heroBackground }}'); background-size: cover; background-position: center;"
 @endif>        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 grid gap-10 lg:grid-cols-[1.1fr,0.9fr] items-center">
@@ -18,7 +18,9 @@ style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41
                 <p class="text-lg text-white/80">1000+ sản phẩm nam nữ, cập nhật xu hướng với chất liệu cao cấp, giao nhanh toàn quốc.</p>
                 <div class="flex flex-wrap gap-4">
                     <a href="{{ route('products.index') }}" class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-slate-900">Khám phá ngay</a>
+                    <a href="#new-arrivals" class="inline-flex items-center justify-center rounded-full border border-white/40 px-6 py-3 text-base font-semibold text-white">Hàng mới về</a>
                     <a href="#trending" class="inline-flex items-center justify-center rounded-full border border-white/40 px-6 py-3 text-base font-semibold text-white">Sản phẩm hot</a>
+                    <a href="#sale" class="inline-flex items-center justify-center rounded-full border border-white/40 px-6 py-3 text-base font-semibold text-white">Khuyến mãi</a>
                 </div>
                 <dl class="grid grid-cols-3 gap-4 pt-6 text-white/80">
                     <div>
@@ -41,7 +43,7 @@ style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41
                     @php($primaryImage = $product->cover_image ?: optional($product->images->first())->path)
                     @php($cardImage = $primaryImage ? Storage::url($primaryImage) : 'https://placehold.co/600x400?text=QAO+Product')
                     <a href="{{ route('products.show', $product) }}" class="relative flex h-60 items-end rounded-3xl bg-cover bg-center shadow-2xl" style="background-image: url('{{ $cardImage }}')">
-                        <div class="w-full rounded-3xl rounded-t-none bg-gradient-to-t from-black/80 via-black/20 to-transparent p-4">
+                        <div class="w-full rounded-3xl rounded-t-none bg-linear-to-t from-black/80 via-black/20 to-transparent p-4">
                             <div class="mt-3 inline-flex items-center rounded-full bg-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white">Xem ngay</div>
                         </div>
                     </a>
@@ -84,4 +86,5 @@ style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41
         </div>
         @include('products.partials.grid', ['products' => $sales])
     </section>
+
 @endsection
