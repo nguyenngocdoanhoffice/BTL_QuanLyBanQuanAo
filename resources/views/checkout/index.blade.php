@@ -3,10 +3,6 @@
 @section('title', 'Thanh toán')
 
 @section('content')
-    @php
-        $shippingFee = $cart['subtotal'] >= 1000000 ? 0 : 39000;
-        $orderTotal = $cart['subtotal'] + $shippingFee;
-    @endphp
     <section class="relative isolate overflow-hidden bg-linear-to-b from-slate-900 via-slate-900 to-slate-800 text-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -83,9 +79,19 @@
                             <div>
                                 <label class="text-sm font-medium text-slate-600">Mã giảm giá</label>
                                 <div class="mt-2 flex gap-3">
-                                    <input type="text" name="discount_code" value="{{ old('discount_code') }}" class="w-full rounded-2xl border border-black bg-orange-50 px-4 py-3 focus:border-orange-500 focus:ring-orange-500" placeholder="SUMMER10">
-                                    <span class="inline-flex items-center rounded-2xl bg-orange-600 px-4 text-sm font-semibold text-white">Áp dụng</span>
+                                    <input type="text" name="discount_code" value="{{ old('discount_code', $discountCode ?? '') }}" class="w-full rounded-2xl border border-black bg-orange-50 px-4 py-3 focus:border-orange-500 focus:ring-orange-500" placeholder="SUMMER10">
+                                    <button type="submit" formaction="{{ route('checkout.discount.apply') }}" formmethod="POST" formnovalidate class="inline-flex items-center rounded-2xl bg-orange-600 px-4 text-sm font-semibold text-white">
+                                        Áp dụng
+                                    </button>
                                 </div>
+                                @if (!empty($discountCode))
+                                    <div class="mt-2 flex items-center justify-between text-sm text-slate-600">
+                                        <span>Đã áp dụng: <span class="font-semibold text-slate-900">{{ $discountCode }}</span></span>
+                                        <button type="submit" formaction="{{ route('checkout.discount.remove') }}" formmethod="POST" formnovalidate name="_method" value="DELETE" class="font-medium text-rose-600 hover:text-rose-700">
+                                            Gỡ mã
+                                        </button>
+                                    </div>
+                                @endif
                                 @error('discount_code')<p class="text-sm text-rose-500 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </div>
@@ -156,7 +162,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <dt class="text-slate-500">Giảm giá</dt>
-                            <dd class="font-semibold text-emerald-600">{{ old('discount_code') ? '-Áp dụng mã' : '-0 đ' }}</dd>
+                            <dd class="font-semibold text-emerald-600">-{{ number_format($discountTotal ?? 0, 0, ',', '.') }} đ</dd>
                         </div>
                         <div class="flex items-center justify-between">
                             <dt class="text-slate-500">Phí vận chuyển</dt>
@@ -164,7 +170,7 @@
                         </div>
                         <div class="flex items-center justify-between border-t border-slate-100 pt-3 text-base">
                             <dt class="font-semibold text-slate-900">Tổng cộng</dt>
-                            <dd class="text-2xl font-semibold text-slate-900">{{ number_format($orderTotal, 0, ',', '.') }} đ</dd>
+                            <dd class="text-2xl font-semibold text-slate-900">{{ number_format($orderTotal ?? ($cart['subtotal'] + ($shippingFee ?? 0)), 0, ',', '.') }} đ</dd>
                         </div>
                     </dl>
 

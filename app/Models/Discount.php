@@ -38,6 +38,9 @@ class Discount extends Model
     {
         return $query->where('is_active', true)
             ->where(function ($query) {
+                $query->whereNull('usage_limit')->orWhereColumn('used', '<', 'usage_limit');
+            })
+            ->where(function ($query) {
                 $query->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })
             ->where(function ($query) {

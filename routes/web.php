@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DiscountController as AdminDiscountController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\SalesReportController as AdminSalesReportController;
@@ -43,6 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', [ProfileController::class, 'edit'])->name('account.index');
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/discount', [CheckoutController::class, 'applyDiscount'])->name('checkout.discount.apply');
+    Route::delete('/checkout/discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.discount.remove');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -57,6 +60,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('products', AdminProductController::class)->except(['show']);
     Route::resource('banners', AdminBannerController::class)->except(['show']);
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+    Route::resource('discounts', AdminDiscountController::class)->except(['show']);
 
     Route::get('reports/sales', AdminSalesReportController::class)->name('reports.sales');
     Route::get('reports/sales/export', [AdminSalesReportController::class, 'exportExcel'])->name('reports.sales.export');

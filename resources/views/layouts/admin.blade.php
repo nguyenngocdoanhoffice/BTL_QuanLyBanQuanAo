@@ -35,6 +35,9 @@
                 <a href="{{ route('admin.orders.index') }}" class="block rounded-xl px-4 py-3 {{ request()->routeIs('admin.orders.*') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                     Đơn hàng
                 </a>
+                <a href="{{ route('admin.discounts.index') }}" class="block rounded-xl px-4 py-3 {{ request()->routeIs('admin.discounts.*') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+                    Mã giảm giá
+                </a>
                 <a href="{{ route('admin.reports.sales') }}" class="block rounded-xl px-4 py-3 {{ request()->routeIs('admin.reports.sales*') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                     Báo cáo bán hàng
                 </a>

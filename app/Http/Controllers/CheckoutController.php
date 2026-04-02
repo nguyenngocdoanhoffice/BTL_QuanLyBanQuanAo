@@ -17,6 +17,9 @@ use Illuminate\View\View;
 
 class CheckoutController extends Controller
 {
+    private const FREE_SHIPPING_THRESHOLD = 1000000;
+    private const SHIPPING_FEE = 39000;
+
     public function __construct(private readonly CartService $cart)
     {
         $this->middleware('auth');
@@ -33,10 +36,47 @@ class CheckoutController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        $discountCode = session('checkout.discount_code');
+        $checkout = $this->computeCheckoutTotals($totals, $discountCode);
+
         return view('checkout.index', [
             'cart' => $totals,
             'user' => $user,
+            'discountCode' => $discountCode,
+            'discountTotal' => $checkout['discount_total'],
+            'shippingFee' => $checkout['shipping_fee'],
+            'orderTotal' => $checkout['order_total'],
         ]);
+    }
+
+    public function applyDiscount(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'discount_code' => ['required', 'string', 'max:50'],
+        ]);
+
+        $code = Str::upper(trim($data['discount_code']));
+
+        $discount = Discount::query()
+            ->whereNull('product_id')
+            ->where('code', $code)
+            ->active()
+            ->first();
+
+        if (! $discount) {
+            return back()->withErrors(['discount_code' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.'])->withInput();
+        }
+
+        session(['checkout.discount_code' => $code]);
+
+        return redirect()->route('checkout.index')->with('status', 'Đã áp dụng mã giảm giá.');
+    }
+
+    public function removeDiscount(): RedirectResponse
+    {
+        session()->forget('checkout.discount_code');
+
+        return redirect()->route('checkout.index')->with('status', 'Đã gỡ mã giảm giá.');
     }
 
     public function store(Request $request): RedirectResponse
@@ -61,24 +101,17 @@ class CheckoutController extends Controller
 
         /** @var User $user */
         $user = Auth::user();
-        $discount = null;
-        $discountTotal = 0;
+        $sessionCode = session('checkout.discount_code');
+        $requestCode = $data['discount_code'] ? Str::upper(trim($data['discount_code'])) : null;
+        $discountCode = $requestCode ?: $sessionCode;
 
-        if ($code = $data['discount_code'] ?? null) {
-            $discount = Discount::where('code', $code)->active()->first();
+        $checkout = $this->computeCheckoutTotals($totals, $discountCode);
 
-            if (! $discount) {
-                return back()->withErrors(['discount_code' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.']);
-            }
-
-            $discountTotal = $discount->type === 'percentage'
-                ? ($totals['subtotal'] * ($discount->value / 100))
-                : min($discount->value, $totals['subtotal']);
+        if ($discountCode && ! $checkout['discount']) {
+            return back()->withErrors(['discount_code' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.'])->withInput();
         }
 
-        $shippingFee = $totals['subtotal'] >= 100 ? 0 : 3.99;
-
-        DB::transaction(function () use ($data, $user, $totals, $discountTotal, $shippingFee, $discount) {
+        DB::transaction(function () use ($data, $user, $totals, $checkout) {
             $order = Order::create([
                 'user_id' => $user->id,
                 'code' => 'ORD-' . Str::upper(Str::random(6)),
@@ -86,9 +119,9 @@ class CheckoutController extends Controller
                 'payment_method' => $data['payment_method'],
                 'payment_status' => $data['payment_method'] === 'online' ? 'paid' : 'pending',
                 'subtotal' => $totals['subtotal'],
-                'discount_total' => $discountTotal,
-                'shipping_fee' => $shippingFee,
-                'total' => max($totals['subtotal'] - $discountTotal + $shippingFee, 0),
+                'discount_total' => $checkout['discount_total'],
+                'shipping_fee' => $checkout['shipping_fee'],
+                'total' => $checkout['order_total'],
                 'customer_name' => $data['customer_name'],
                 'customer_email' => $data['customer_email'],
                 'customer_phone' => $data['customer_phone'],
@@ -132,13 +165,43 @@ class CheckoutController extends Controller
                 }
             }
 
-            if ($discount) {
-                $discount->increment('used');
+            if ($checkout['discount']) {
+                $checkout['discount']->increment('used');
             }
         });
+
+        session()->forget('checkout.discount_code');
 
         $this->cart->clear();
 
         return redirect()->route('profile.orders')->with('status', 'Đặt hàng thành công.');
+    }
+
+    private function computeCheckoutTotals(array $cart, ?string $discountCode): array
+    {
+        $shippingFee = $cart['subtotal'] >= self::FREE_SHIPPING_THRESHOLD ? 0 : self::SHIPPING_FEE;
+        $discount = null;
+        $discountTotal = 0;
+
+        if ($discountCode) {
+            $discount = Discount::query()
+                ->whereNull('product_id')
+                ->where('code', $discountCode)
+                ->active()
+                ->first();
+
+            if ($discount) {
+                $discountTotal = $discount->type === 'percentage'
+                    ? round($cart['subtotal'] * ((float) $discount->value / 100))
+                    : min((float) $discount->value, (float) $cart['subtotal']);
+            }
+        }
+
+        return [
+            'discount' => $discount,
+            'discount_total' => $discountTotal,
+            'shipping_fee' => $shippingFee,
+            'order_total' => max((float) $cart['subtotal'] - $discountTotal + $shippingFee, 0),
+        ];
     }
 }
