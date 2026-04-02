@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Banners')
+@section('title', 'Banner')
 @section('header', 'Quản lý banner hero')
 
 @php use Illuminate\Support\Facades\Storage; @endphp

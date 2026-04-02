@@ -39,7 +39,7 @@ class CartController extends Controller
 
             if ($inventory && $inventory->quantity <= 0) {
                 return response()->json([
-                    'message' => 'Selected size is out of stock.',
+                    'message' => 'Size đã chọn hiện đã hết hàng.',
                 ], 422);
             }
         } else {
@@ -47,7 +47,7 @@ class CartController extends Controller
 
             if ($inventory && $inventory->quantity <= 0) {
                 return response()->json([
-                    'message' => 'This product is out of stock.',
+                    'message' => 'Sản phẩm này hiện đã hết hàng.',
                 ], 422);
             }
         }
@@ -55,7 +55,7 @@ class CartController extends Controller
         $item = $this->cart->add($product, $data['quantity'], $data['size']);
 
         return response()->json([
-            'message' => 'Product added to cart.',
+            'message' => 'Đã thêm sản phẩm vào giỏ hàng.',
             'item' => $item,
             'totals' => $this->cart->totals(),
         ]);
@@ -72,7 +72,7 @@ class CartController extends Controller
 
         if (! $currentItem) {
             return response()->json([
-                'message' => 'Item not found.',
+                'message' => 'Không tìm thấy sản phẩm trong giỏ hàng.',
             ], 404);
         }
 
@@ -80,14 +80,14 @@ class CartController extends Controller
 
         if ($data['size'] !== null && $availableSizes->isNotEmpty() && ! $availableSizes->contains($data['size'])) {
             return response()->json([
-                'message' => 'Selected size is not available for this item.',
+                'message' => 'Size đã chọn không có sẵn cho sản phẩm này.',
             ], 422);
         }
 
         $this->cart->update($key, $data['quantity'], $data['size'] ?? null);
 
         return response()->json([
-            'message' => 'Cart updated.',
+            'message' => 'Đã cập nhật giỏ hàng.',
             'totals' => $this->cart->totals(),
         ]);
     }
@@ -97,7 +97,7 @@ class CartController extends Controller
         $this->cart->remove($key);
 
         return response()->json([
-            'message' => 'Item removed.',
+            'message' => 'Đã xóa sản phẩm khỏi giỏ hàng.',
             'totals' => $this->cart->totals(),
         ]);
     }
@@ -106,6 +106,6 @@ class CartController extends Controller
     {
         $this->cart->clear();
 
-        return redirect()->route('cart.index')->with('status', 'Cart cleared.');
+        return redirect()->route('cart.index')->with('status', 'Đã xóa toàn bộ giỏ hàng.');
     }
 }

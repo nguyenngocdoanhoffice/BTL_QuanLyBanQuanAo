@@ -8,7 +8,7 @@
     <title>{{ trim(
         collect([
             trim($__env->yieldContent('title')),
-            config('app.name', 'QAO Shop'),
+            config('app.name', 'DOCHA Fashion'),
         ])->filter()->join(' · ')
     ) }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -22,8 +22,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between py-4 gap-6">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-semibold tracking-tight">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white font-bold">Q</span>
-                        <span>QAO Fashion</span>
+                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white font-bold">DC</span>
+                        <span>DOCHA Fashion</span>
                     </a>
                     <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
                         <a href="{{ route('home') }}" class="hover:text-slate-900">Trang chủ</a>
@@ -95,12 +95,12 @@
         <footer class="bg-slate-900 text-slate-100 mt-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid gap-8 md:grid-cols-3 text-sm">
                 <div>
-                    <p class="text-lg font-semibold">QAO Fashion</p>
+                    <p class="text-lg font-semibold">DOCHA Fashion</p>
                     <p class="mt-2 text-slate-400">Thời trang nam nữ hiện đại, cập nhật xu hướng mỗi tuần.</p>
                 </div>
                 <div>
                     <p class="font-semibold">Liên hệ</p>
-                    <p class="text-slate-400">Hotline: 1900 1234<br>Email: support@qao-fashion.com</p>
+                    <p class="text-slate-400">Hotline: 1900 1234<br>Email: support@docha-fashion.com</p>
                 </div>
                 <div>
                     <p class="font-semibold">Theo dõi chúng tôi</p>
@@ -121,13 +121,13 @@
 
             <div class="grid gap-0 md:grid-cols-[0.72fr,1fr]">
                 <div class="bg-slate-100">
-                    <img src="https://placehold.co/900x1100?text=QAO+Fashion" alt="" class="h-full w-full max-h-80 object-cover" data-preview-image>
+                    <img src="https://placehold.co/900x1100?text=DOCHA+Fashion" alt="" class="h-full w-full max-h-80 object-cover" data-preview-image>
                 </div>
                 <div class="space-y-3 p-4 sm:p-5">
                     <div class="space-y-1.5">
-                        <p class="text-xs uppercase tracking-[0.4em] text-slate-400" data-preview-category>Fashion</p>
-                        <h2 class="text-xl font-semibold leading-tight" data-preview-title>Product title</h2>
-                        <p class="text-xs text-slate-500" data-preview-brand>Brand</p>
+                        <p class="text-xs uppercase tracking-[0.4em] text-slate-400" data-preview-category>Thời trang</p>
+                        <h2 class="text-xl font-semibold leading-tight" data-preview-title>Tên sản phẩm</h2>
+                        <p class="text-xs text-slate-500" data-preview-brand>Thương hiệu</p>
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -143,7 +143,7 @@
                         <div>
                             <label class="text-xs font-medium text-slate-600">Chọn size</label>
                             <div class="mt-2 flex flex-wrap gap-2" data-preview-sizes></div>
-                            <p class="mt-1.5 hidden text-xs text-slate-500" data-preview-freesize>Free-size</p>
+                            <p class="mt-1.5 hidden text-xs text-slate-500" data-preview-freesize>Freesize</p>
                         </div>
                         <div>
                             <label class="text-xs font-medium text-slate-600">Số lượng</label>

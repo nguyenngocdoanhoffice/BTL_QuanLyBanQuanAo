@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'New banner')
+@section('title', 'Thêm banner')
 @section('header', 'Thêm banner hero')
 
 @section('content')

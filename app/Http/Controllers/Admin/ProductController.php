@@ -49,7 +49,7 @@ class ProductController extends Controller
         $product = Product::create($data);
         $this->syncStockQuantity($product, (int) ($data['stock_quantity'] ?? 0), $data['size_options'] ?? null);
 
-        return redirect()->route('admin.products.index')->with('status', 'Product created.');
+        return redirect()->route('admin.products.index')->with('status', 'Đã tạo sản phẩm.');
     }
 
     public function edit(Product $product): View
@@ -83,7 +83,7 @@ class ProductController extends Controller
         $product->update($data);
         $this->syncStockQuantity($product, (int) ($data['stock_quantity'] ?? 0), $data['size_options'] ?? null);
 
-        return redirect()->route('admin.products.index')->with('status', 'Product updated.');
+        return redirect()->route('admin.products.index')->with('status', 'Đã cập nhật sản phẩm.');
     }
 
     public function destroy(Product $product): RedirectResponse
@@ -94,7 +94,7 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect()->route('admin.products.index')->with('status', 'Product deleted.');
+        return redirect()->route('admin.products.index')->with('status', 'Đã xóa sản phẩm.');
     }
 
     private function validateProduct(Request $request, ?Product $product = null): array

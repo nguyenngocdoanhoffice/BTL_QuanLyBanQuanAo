@@ -32,14 +32,14 @@
                     @forelse ($items as $item)
                         <div class="flex flex-wrap gap-4 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm" data-cart-item data-key="{{ $item['key'] }}" data-price="{{ $item['price'] }}" data-item-name="{{ Str::lower($item['name']) }}">
                             <div class="shrink-0">
-                                <img src="{{ $item['image'] ?? 'https://placehold.co/200x200?text=QAO' }}" alt="{{ $item['name'] }}" class="h-32 w-28 rounded-2xl object-cover">
+                                <img src="{{ $item['image'] ?? 'https://placehold.co/200x200?text=DOCHA' }}" alt="{{ $item['name'] }}" class="h-32 w-28 rounded-2xl object-cover">
                             </div>
                             <div class="flex flex-1 flex-col gap-2">
                                 <div class="flex flex-wrap items-center justify-between gap-2">
                                     <p class="text-lg font-semibold">{{ $item['name'] }}</p>
                                 </div>
                                 <div class="flex flex-wrap items-center gap-3">
-                                    <span class="text-sm text-slate-500">Size:</span>
+                                    <span class="text-sm text-slate-500">Kích cỡ:</span>
                                     @if (!empty($item['available_sizes']))
                                         <select class="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm" data-cart-size>
                                             @foreach ($item['available_sizes'] as $size)
@@ -47,7 +47,7 @@
                                             @endforeach
                                         </select>
                                     @else
-                                        <span class="text-sm text-slate-500">Freesize</span>
+                                        <span class="text-sm text-slate-500">Một size</span>
                                     @endif
                                 </div>
                                 <p class="text-sm text-slate-500">Giá: {{ number_format($item['price'], 0, ',', '.') }} đ</p>

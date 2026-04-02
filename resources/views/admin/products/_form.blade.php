@@ -2,16 +2,16 @@
     $sizeValue = old('size_options', isset($product) && is_array($product->size_options) ? implode(', ', $product->size_options) : '');
     $statusValue = old('status', $product->status ?? 'draft');
     $statuses = [
-        'draft' => 'Draft',
-        'published' => 'Published',
-        'archived' => 'Archived',
+        'draft' => 'Nháp',
+        'published' => 'Đang bán',
+        'archived' => 'Lưu trữ',
     ];
 @endphp
 
 <div class="grid gap-10 lg:grid-cols-[1.3fr,0.7fr]">
     <div class="space-y-6">
         <div class="space-y-2">
-            <label for="title" class="text-sm font-medium text-slate-600">Title</label>
+            <label for="title" class="text-sm font-medium text-slate-600">Tên sản phẩm</label>
             <input type="text" id="title" name="title" value="{{ old('title', $product->title ?? '') }}" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
             @error('title')
                 <p class="text-sm text-rose-600">{{ $message }}</p>
@@ -35,9 +35,9 @@
         </div>
         <div class="grid gap-6 md:grid-cols-2">
             <div class="space-y-2">
-                <label for="category_id" class="text-sm font-medium text-slate-600">Category</label>
+                <label for="category_id" class="text-sm font-medium text-slate-600">Danh mục</label>
                 <select id="category_id" name="category_id" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
-                    <option value="">Select category</option>
+                    <option value="">Chọn danh mục</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id ?? '') == $category->id)>
                             {{ $category->name }}
@@ -49,9 +49,9 @@
                 @enderror
             </div>
             <div class="space-y-2">
-                <label for="brand_id" class="text-sm font-medium text-slate-600">Brand</label>
+                <label for="brand_id" class="text-sm font-medium text-slate-600">Thương hiệu</label>
                 <select id="brand_id" name="brand_id" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
-                    <option value="">No brand</option>
+                    <option value="">Không chọn</option>
                     @foreach ($brands as $brand)
                         <option value="{{ $brand->id }}" @selected(old('brand_id', $product->brand_id ?? '') == $brand->id)>{{ $brand->name }}</option>
                     @endforeach
@@ -63,14 +63,14 @@
         </div>
         <div class="grid gap-6 md:grid-cols-2">
             <div class="space-y-2">
-                <label for="price" class="text-sm font-medium text-slate-600">Price</label>
+                <label for="price" class="text-sm font-medium text-slate-600">Giá</label>
                 <input type="number" id="price" name="price" value="{{ old('price', $product->price ?? '') }}" min="0" step="0.01" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
                 @error('price')
                     <p class="text-sm text-rose-600">{{ $message }}</p>
                 @enderror
             </div>
             <div class="space-y-2">
-                <label for="sale_price" class="text-sm font-medium text-slate-600">Sale price</label>
+                <label for="sale_price" class="text-sm font-medium text-slate-600">Giá khuyến mãi</label>
                 <input type="number" id="sale_price" name="sale_price" value="{{ old('sale_price', $product->sale_price ?? '') }}" min="0" step="0.01" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
                 @error('sale_price')
                     <p class="text-sm text-rose-600">{{ $message }}</p>
@@ -79,22 +79,22 @@
         </div>
 
         <div class="space-y-2">
-            <label for="stock_quantity" class="text-sm font-medium text-slate-600">Stock quantity</label>
+            <label for="stock_quantity" class="text-sm font-medium text-slate-600">Số lượng tồn kho</label>
             <input type="number" id="stock_quantity" name="stock_quantity" value="{{ old('stock_quantity', $stockQuantity ?? 0) }}" min="0" step="1" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
-            <p class="text-xs text-slate-500">If sizes are provided, stock will be distributed evenly by size.</p>
+            <p class="text-xs text-slate-500">Nếu có danh sách size, tồn kho sẽ được chia đều theo từng size.</p>
             @error('stock_quantity')
                 <p class="text-sm text-rose-600">{{ $message }}</p>
             @enderror
         </div>
         <div class="space-y-2">
-            <label for="short_description" class="text-sm font-medium text-slate-600">Short description</label>
+            <label for="short_description" class="text-sm font-medium text-slate-600">Mô tả ngắn</label>
             <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">{{ old('short_description', $product->short_description ?? '') }}</textarea>
             @error('short_description')
                 <p class="text-sm text-rose-600">{{ $message }}</p>
             @enderror
         </div>
         <div class="space-y-2">
-            <label for="description" class="text-sm font-medium text-slate-600">Description</label>
+            <label for="description" class="text-sm font-medium text-slate-600">Mô tả</label>
             <textarea id="description" name="description" rows="6" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">{{ old('description', $product->description ?? '') }}</textarea>
             @error('description')
                 <p class="text-sm text-rose-600">{{ $message }}</p>
@@ -102,15 +102,15 @@
         </div>
         <div class="grid gap-6 md:grid-cols-2">
             <div class="space-y-2">
-                <label for="size_options" class="text-sm font-medium text-slate-600">Available sizes</label>
+                <label for="size_options" class="text-sm font-medium text-slate-600">Danh sách size</label>
                 <input type="text" id="size_options" name="size_options" value="{{ $sizeValue }}" placeholder="XS, S, M, L" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
-                <p class="text-xs text-slate-500">Separate by comma.</p>
+                <p class="text-xs text-slate-500">Ngăn cách bằng dấu phẩy.</p>
                 @error('size_options')
                     <p class="text-sm text-rose-600">{{ $message }}</p>
                 @enderror
             </div>
             <div class="space-y-2">
-                <label for="status" class="text-sm font-medium text-slate-600">Status</label>
+                <label for="status" class="text-sm font-medium text-slate-600">Trạng thái</label>
                 <select id="status" name="status" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
                     @foreach ($statuses as $value => $label)
                         <option value="{{ $value }}" @selected($statusValue === $value)>{{ $label }}</option>
@@ -125,30 +125,30 @@
 
     <div class="space-y-6">
         <div class="space-y-2">
-            <label for="cover_image" class="text-sm font-medium text-slate-600">Cover image</label>
+            <label for="cover_image" class="text-sm font-medium text-slate-600">Ảnh đại diện</label>
             <input type="file" id="cover_image" name="cover_image" class="w-full rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-10 text-center text-sm text-slate-500">
             @error('cover_image')
                 <p class="text-sm text-rose-600">{{ $message }}</p>
             @enderror
             @if (!empty($product?->cover_image))
                 <div class="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                    <p class="text-xs uppercase tracking-wide text-slate-500">Current image</p>
+                    <p class="text-xs uppercase tracking-wide text-slate-500">Ảnh hiện tại</p>
                     <img src="{{ asset('storage/' . $product->cover_image) }}" alt="{{ $product->title }}" class="mt-3 rounded-xl">
                 </div>
             @endif
         </div>
         <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 space-y-3">
-            <p class="text-sm font-semibold text-slate-700">Highlights</p>
+            <p class="text-sm font-semibold text-slate-700">Nổi bật</p>
             <label class="flex items-center justify-between text-sm text-slate-600">
-                <span>Trending</span>
+                <span>Nổi bật</span>
                 <input type="checkbox" name="is_trending" value="1" @checked(old('is_trending', $product->is_trending ?? false)) class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900">
             </label>
             <label class="flex items-center justify-between text-sm text-slate-600">
-                <span>New arrival</span>
+                <span>Hàng mới</span>
                 <input type="checkbox" name="is_new" value="1" @checked(old('is_new', $product->is_new ?? false)) class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900">
             </label>
             <label class="flex items-center justify-between text-sm text-slate-600">
-                <span>Sale spotlight</span>
+                <span>Khuyến mãi</span>
                 <input type="checkbox" name="is_sale" value="1" @checked(old('is_sale', $product->is_sale ?? false)) class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900">
             </label>
         </div>

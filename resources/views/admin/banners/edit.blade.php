@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit banner')
+@section('title', 'Sửa banner')
 @section('header', 'Cập nhật banner hero')
 
 @section('content')

@@ -22,7 +22,7 @@
                             </div>
                             <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                                 <dt class="text-slate-500">Email</dt>
-                                <dd class="font-semibold text-slate-800">support@qao-fashion.com</dd>
+                                <dd class="font-semibold text-slate-800">support@docha-fashion.com</dd>
                             </div>
                             <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                                 <dt class="text-slate-500">Giờ làm việc</dt>

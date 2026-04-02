@@ -27,7 +27,7 @@ class CheckoutController extends Controller
         $totals = $this->cart->totals();
 
         if ($totals['count'] === 0) {
-            return redirect()->route('cart.index')->with('status', 'Your cart is empty.');
+            return redirect()->route('cart.index')->with('status', 'Giỏ hàng của bạn đang trống.');
         }
 
         /** @var User $user */
@@ -44,7 +44,7 @@ class CheckoutController extends Controller
         $totals = $this->cart->totals();
 
         if ($totals['count'] === 0) {
-            return redirect()->route('cart.index')->with('status', 'Please add products before checking out.');
+            return redirect()->route('cart.index')->with('status', 'Vui lòng thêm sản phẩm vào giỏ trước khi thanh toán.');
         }
 
         $data = $request->validate([
@@ -68,7 +68,7 @@ class CheckoutController extends Controller
             $discount = Discount::where('code', $code)->active()->first();
 
             if (! $discount) {
-                return back()->withErrors(['discount_code' => 'Invalid or expired discount code.']);
+                return back()->withErrors(['discount_code' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.']);
             }
 
             $discountTotal = $discount->type === 'percentage'
@@ -139,6 +139,6 @@ class CheckoutController extends Controller
 
         $this->cart->clear();
 
-        return redirect()->route('profile.orders')->with('status', 'Order placed successfully.');
+        return redirect()->route('profile.orders')->with('status', 'Đặt hàng thành công.');
     }
 }

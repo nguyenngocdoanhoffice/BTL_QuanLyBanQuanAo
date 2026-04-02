@@ -8,7 +8,7 @@
     <title>{{ trim(
         collect([
             trim($__env->yieldContent('title')),
-            'Quản trị · ' . config('app.name', 'QAO Shop'),
+            'Quản trị · ' . config('app.name', 'DOCHA Fashion'),
         ])->filter()->join(' · ')
     ) }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -20,8 +20,8 @@
         <aside class="hidden lg:flex w-64 flex-col border-r border-slate-200 bg-white">
             <div class="px-6 py-6 border-b border-slate-100">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 text-lg font-semibold">
-                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white font-bold">Q</span>
-                    <span>QAO Admin</span>
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white font-bold">D</span>
+                    <span>DOCHA Admin</span>
                 </a>
                 <p class="mt-4 text-xs uppercase tracking-wide text-slate-500">Quản lý</p>
             </div>
@@ -52,7 +52,7 @@
             <header class="bg-white border-b border-slate-200">
                 <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
                     <div>
-                        <p class="text-xs uppercase tracking-wide text-slate-500">{{ now()->format('M d, Y') }}</p>
+                        <p class="text-xs uppercase tracking-wide text-slate-500">{{ now()->format('d/m/Y') }}</p>
                         <h1 class="text-xl font-semibold">@yield('header', 'Trung tâm điều khiển')</h1>
                     </div>
                     <div class="flex items-center gap-3 text-sm">

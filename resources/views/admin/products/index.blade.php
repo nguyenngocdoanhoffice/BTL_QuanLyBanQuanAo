@@ -1,18 +1,18 @@
 @extends('layouts.admin')
 
-@section('title', 'Products')
-@section('header', 'Product catalog')
+@section('title', 'Sản phẩm')
+@section('header', 'Danh sách sản phẩm')
 
 @section('content')
     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-semibold tracking-tight">All products</h1>
-                <p class="text-sm text-slate-500">{{ $products->total() }} records</p>
+                <h1 class="text-2xl font-semibold tracking-tight">Tất cả sản phẩm</h1>
+                <p class="text-sm text-slate-500">{{ $products->total() }} bản ghi</p>
             </div>
             <a href="{{ route('admin.products.create') }}" class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white">
                 <span aria-hidden="true">＋</span>
-                New product
+                Thêm sản phẩm
             </a>
         </div>
 
@@ -20,11 +20,11 @@
             <table class="w-full text-left text-sm">
                 <thead>
                     <tr class="text-slate-500">
-                        <th class="py-3 font-medium">Product</th>
-                        <th class="py-3 font-medium">Category</th>
-                        <th class="py-3 font-medium">Price</th>
-                        <th class="py-3 font-medium">Stock</th>
-                        <th class="py-3 font-medium">Status</th>
+                        <th class="py-3 font-medium">Sản phẩm</th>
+                        <th class="py-3 font-medium">Danh mục</th>
+                        <th class="py-3 font-medium">Giá</th>
+                        <th class="py-3 font-medium">Tồn kho</th>
+                        <th class="py-3 font-medium">Trạng thái</th>
                         <th class="py-3"></th>
                     </tr>
                 </thead>
@@ -45,25 +45,25 @@
                                 </div>
                             </td>
                             <td class="py-4">{{ $product->category?->name ?? '—' }}</td>
-                            <td class="py-4 font-semibold">{{ number_format($product->price, 0, '.', ',') }} VND</td>
+                            <td class="py-4 font-semibold">{{ number_format($product->price, 0, '.', ',') }} đ</td>
                             <td class="py-4">{{ number_format((int) ($product->inventories_sum_quantity ?? 0)) }}</td>
                             <td class="py-4">
                                 <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">{{ $product->status }}</span>
                             </td>
                             <td class="py-4 text-right">
                                 <div class="inline-flex items-center gap-3">
-                                    <a href="{{ route('admin.products.edit', $product) }}" class="text-sm font-semibold text-slate-900">Edit</a>
-                                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Delete this product?')">
+                                    <a href="{{ route('admin.products.edit', $product) }}" class="text-sm font-semibold text-slate-900">Sửa</a>
+                                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Xóa sản phẩm này?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-sm font-semibold text-rose-600">Delete</button>
+                                        <button type="submit" class="text-sm font-semibold text-rose-600">Xóa</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-6 text-center text-slate-500">No products yet.</td>
+                            <td colspan="6" class="py-6 text-center text-slate-500">Chưa có sản phẩm.</td>
                         </tr>
                     @endforelse
                 </tbody>

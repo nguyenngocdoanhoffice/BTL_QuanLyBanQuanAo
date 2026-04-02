@@ -30,7 +30,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid gap-12 lg:grid-cols-2">
             <div class="space-y-4">
-                @php($mainImage = $product->cover_image ? Storage::url($product->cover_image) : 'https://placehold.co/800x1000?text=QAO+Fashion')
+                @php($mainImage = $product->cover_image ? Storage::url($product->cover_image) : 'https://placehold.co/800x1000?text=DOCHA+Thoi+trang')
                 <img src="{{ $mainImage }}" alt="{{ $product->title }}" class="w-full rounded-[32px] border border-slate-100 object-cover shadow-xl" id="main-product-image">
                 <div class="flex gap-4 overflow-x-auto">
                     @foreach ($product->images as $image)
@@ -68,7 +68,7 @@
                                 </label>
                             @empty
                                 <input type="hidden" name="size" value="">
-                                <span class="text-sm text-slate-500">Sản phẩm free-size (còn {{ number_format($freeSizeQuantity) }}).</span>
+                                <span class="text-sm text-slate-500">Sản phẩm freesize (còn {{ number_format($freeSizeQuantity) }}).</span>
                             @endforelse
                         </div>
                     </div>

@@ -11,7 +11,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <p class="text-sm uppercase tracking-[0.4em] text-slate-400">QAO checkout</p>
+                    <p class="text-sm uppercase tracking-[0.4em] text-slate-400">DOCHA Fashion</p>
                     <h1 class="mt-3 text-4xl font-semibold">Hoàn tất đơn hàng của bạn</h1>
                     <p class="mt-3 text-slate-300">Nhập thông tin giao hàng, chọn phương thức thanh toán và kiểm tra lại sản phẩm trước khi xác nhận.</p>
                 </div>
@@ -109,7 +109,7 @@
                             <label class="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 px-4 py-4 transition hover:border-slate-900">
                                 <input type="radio" name="payment_method" value="online" class="mt-1 text-slate-900" {{ old('payment_method') === 'online' ? 'checked' : '' }}>
                                 <span>
-                                    <span class="font-semibold text-slate-900">Thanh toán online (Mock)</span>
+                                    <span class="font-semibold text-slate-900">Thanh toán online (Mô phỏng)</span>
                                     <span class="mt-1 block text-sm text-slate-500">Visa / Mastercard / Ví điện tử được mô phỏng.</span>
                                 </span>
                             </label>
@@ -135,12 +135,12 @@
                                     @if (!empty($item['image']))
                                         <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="h-full w-full rounded-xl object-cover">
                                     @else
-                                        <div class="flex h-full w-full items-center justify-center rounded-xl bg-slate-100 text-slate-400 text-xs">QAO</div>
+                                        <div class="flex h-full w-full items-center justify-center rounded-xl bg-slate-100 text-slate-400 text-xs">DOCHA</div>
                                     @endif
                                 </div>
                                 <div class="flex-1 text-sm">
                                     <p class="font-semibold text-slate-900">{{ $item['name'] }}</p>
-                                    <p class="text-slate-500">x{{ $item['quantity'] }} · Size {{ $item['size'] ?? 'Freesize' }}</p>
+                                    <p class="text-slate-500">x{{ $item['quantity'] }} · Size {{ $item['size'] ?? 'Một size' }}</p>
                                 </div>
                                 <p class="text-sm font-semibold">{{ number_format($item['subtotal'], 0, ',', '.') }} đ</p>
                             </div>
@@ -172,7 +172,7 @@
                         <p class="font-semibold text-slate-900">An tâm mua sắm</p>
                         <ul class="mt-2 space-y-1">
                             <li>• Đổi trả trong 7 ngày nếu sản phẩm lỗi.</li>
-                            <li>• Đóng gói thân thiện môi trường, theo dõi hành trình realtime.</li>
+                            <li>• Đóng gói thân thiện môi trường, theo dõi hành trình thời gian thực.</li>
                             <li>• Hỗ trợ 24/7 qua hotline 1900 1234.</li>
                         </ul>
                     </div>

@@ -41,7 +41,7 @@ class ProfileController extends Controller
 
         $user->update($data);
 
-        return back()->with('status', 'Profile updated.');
+        return back()->with('status', 'Đã cập nhật hồ sơ.');
     }
 
     public function updatePassword(Request $request): RedirectResponse
@@ -58,7 +58,7 @@ class ProfileController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        return back()->with('status', 'Password changed.');
+        return back()->with('status', 'Đã đổi mật khẩu.');
     }
 
     public function orders(): View
