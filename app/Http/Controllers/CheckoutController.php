@@ -69,14 +69,18 @@ class CheckoutController extends Controller
 
         session(['checkout.discount_code' => $code]);
 
-        return redirect()->route('checkout.index')->with('status', 'Đã áp dụng mã giảm giá.');
+        return back()
+            ->withInput(array_merge($request->except('discount_code'), ['discount_code' => $code]))
+            ->with('status', 'Đã áp dụng mã giảm giá.');
     }
 
-    public function removeDiscount(): RedirectResponse
+    public function removeDiscount(Request $request): RedirectResponse
     {
         session()->forget('checkout.discount_code');
 
-        return redirect()->route('checkout.index')->with('status', 'Đã gỡ mã giảm giá.');
+        return back()
+            ->withInput($request->except('discount_code'))
+            ->with('status', 'Đã gỡ mã giảm giá.');
     }
 
     public function store(Request $request): RedirectResponse
