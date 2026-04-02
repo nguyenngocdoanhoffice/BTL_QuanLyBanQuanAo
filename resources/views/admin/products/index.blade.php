@@ -23,6 +23,7 @@
                         <th class="py-3 font-medium">Product</th>
                         <th class="py-3 font-medium">Category</th>
                         <th class="py-3 font-medium">Price</th>
+                        <th class="py-3 font-medium">Stock</th>
                         <th class="py-3 font-medium">Status</th>
                         <th class="py-3"></th>
                     </tr>
@@ -45,6 +46,7 @@
                             </td>
                             <td class="py-4">{{ $product->category?->name ?? '—' }}</td>
                             <td class="py-4 font-semibold">{{ number_format($product->price, 0, '.', ',') }} VND</td>
+                            <td class="py-4">{{ number_format((int) ($product->inventories_sum_quantity ?? 0)) }}</td>
                             <td class="py-4">
                                 <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">{{ $product->status }}</span>
                             </td>
@@ -61,7 +63,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-6 text-center text-slate-500">No products yet.</td>
+                            <td colspan="6" class="py-6 text-center text-slate-500">No products yet.</td>
                         </tr>
                     @endforelse
                 </tbody>

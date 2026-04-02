@@ -118,7 +118,16 @@ class CheckoutController extends Controller
                     $inventoryQuery->whereNull('size');
                 }
 
-                if ($inventory = $inventoryQuery->lockForUpdate()->first()) {
+                $inventory = $inventoryQuery->lockForUpdate()->first();
+
+                if (! $inventory && $item['size']) {
+                    $inventory = Inventory::where('product_id', $item['product_id'])
+                        ->whereNull('size')
+                        ->lockForUpdate()
+                        ->first();
+                }
+
+                if ($inventory) {
                     $inventory->decrement('quantity', $item['quantity']);
                 }
             }

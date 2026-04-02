@@ -9,6 +9,23 @@
         if ($sizes->isEmpty()) {
             $sizes = collect($product->size_options ?? [])->filter();
         }
+
+        $sizeInventories = $product->inventories
+            ->whereNotNull('size')
+            ->keyBy('size');
+
+        $freeSizeQuantity = (int) optional($product->inventories->firstWhere('size', null))->quantity;
+
+        $distributedQuantities = [];
+        if ($sizes->isNotEmpty() && $sizeInventories->isEmpty() && $freeSizeQuantity > 0) {
+            $sizeCount = $sizes->count();
+            $perSize = $sizeCount > 0 ? intdiv($freeSizeQuantity, $sizeCount) : 0;
+            $remainder = $sizeCount > 0 ? $freeSizeQuantity % $sizeCount : 0;
+
+            foreach ($sizes->values() as $index => $size) {
+                $distributedQuantities[(string) $size] = $perSize + ($index < $remainder ? 1 : 0);
+            }
+        }
     @endphp
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid gap-12 lg:grid-cols-2">
@@ -41,13 +58,17 @@
                         <label class="text-sm font-medium text-slate-600">Chọn size</label>
                         <div class="mt-3 flex flex-wrap gap-3" data-size-group>
                             @forelse ($sizes as $size)
+                                @php($quantityLeft = (int) (optional($sizeInventories->get($size))->quantity ?? ($distributedQuantities[(string) $size] ?? 0)))
                                 <label class="inline-flex cursor-pointer">
                                     <input type="radio" name="size" value="{{ $size }}" class="peer sr-only" @checked($loop->first)>
-                                    <span class="min-w-[60px] rounded-full border border-slate-200 px-4 py-2 text-center text-sm font-medium text-slate-600 transition peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white" data-size-option>{{ $size }}</span>
+                                    <span class="min-w-[60px] rounded-full border border-slate-200 px-4 py-2 text-center text-sm font-medium text-slate-600 transition peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white" data-size-option>
+                                        {{ $size }}
+                                        <span class="ml-1 text-xs font-semibold text-slate-400">({{ number_format($quantityLeft) }})</span>
+                                    </span>
                                 </label>
                             @empty
                                 <input type="hidden" name="size" value="">
-                                <span class="text-sm text-slate-500">Sản phẩm free-size.</span>
+                                <span class="text-sm text-slate-500">Sản phẩm free-size (còn {{ number_format($freeSizeQuantity) }}).</span>
                             @endforelse
                         </div>
                     </div>

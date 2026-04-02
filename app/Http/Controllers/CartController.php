@@ -33,9 +33,21 @@ class CartController extends Controller
         if ($data['size']) {
             $inventory = $product->inventories()->where('size', $data['size'])->first();
 
+            if (! $inventory) {
+                $inventory = $product->inventories()->whereNull('size')->first();
+            }
+
             if ($inventory && $inventory->quantity <= 0) {
                 return response()->json([
                     'message' => 'Selected size is out of stock.',
+                ], 422);
+            }
+        } else {
+            $inventory = $product->inventories()->whereNull('size')->first();
+
+            if ($inventory && $inventory->quantity <= 0) {
+                return response()->json([
+                    'message' => 'This product is out of stock.',
                 ], 422);
             }
         }

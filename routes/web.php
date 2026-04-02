@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\SalesReportController as AdminSalesReportController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CartController;
@@ -53,4 +54,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('products', AdminProductController::class)->except(['show']);
     Route::resource('banners', AdminBannerController::class)->except(['show']);
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+
+    Route::get('reports/sales', AdminSalesReportController::class)->name('reports.sales');
+    Route::get('reports/sales/export', [AdminSalesReportController::class, 'exportExcel'])->name('reports.sales.export');
 });

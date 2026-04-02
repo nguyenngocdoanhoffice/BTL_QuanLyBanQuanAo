@@ -48,6 +48,9 @@
                                     </button>
                                     <div id="account-menu" data-account-menu class="invisible absolute right-0 top-12 z-20 w-56 rounded-3xl border border-slate-200 bg-white p-2 opacity-0 shadow-2xl transition duration-150">
                                         <a href="{{ route('account.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Tài khoản</a>
+                                        @if (auth()->user()?->isAdmin())
+                                            <a href="{{ route('admin.dashboard') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Quản lý bán hàng</a>
+                                        @endif
                                         <form method="POST" action="{{ route('logout') }}" class="mt-1">
                                             @csrf
                                             <button type="submit" class="flex w-full items-center rounded-2xl px-4 py-3 text-sm font-medium text-rose-600 hover:bg-rose-50">

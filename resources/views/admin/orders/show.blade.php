@@ -4,11 +4,10 @@
 @section('header', 'Chi tiết đơn hàng')
 
 @section('content')
-    @if (session('status'))
-        <div class="mb-6 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-            {{ session('status') }}
-        </div>
-    @endif
+    @php
+        use App\Models\Order;
+        $isCompleted = $order->status === Order::STATUS_COMPLETED;
+    @endphp
 
     @if ($errors->any())
         <div class="mb-6 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -64,15 +63,22 @@
                 <h2 class="text-lg font-semibold">Trạng thái vận đơn</h2>
                 <p class="text-sm text-slate-500">Chọn một trong các bước xử lý để đồng bộ với khách hàng.</p>
             </div>
+
+            @if ($isCompleted)
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                    Đơn hàng đã hoàn thành nên không thể thay đổi trạng thái.
+                </div>
+            @endif
+
             <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="space-y-4">
                 @csrf
                 @method('PUT')
-                <select name="status" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                <select name="status" class="w-full rounded-2xl border border-slate-200 px-4 py-3 {{ $isCompleted ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : '' }}" {{ $isCompleted ? 'disabled' : '' }}>
                     @foreach ($statuses as $value => $label)
                         <option value="{{ $value }}" @selected($order->status === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
-                <button type="submit" class="w-full rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white">Cập nhật trạng thái</button>
+                <button type="submit" class="w-full rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white {{ $isCompleted ? 'opacity-60 cursor-not-allowed' : '' }}" {{ $isCompleted ? 'disabled' : '' }}>Cập nhật trạng thái</button>
             </form>
             <div class="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
                 <p>Các trạng thái khả dụng:</p>

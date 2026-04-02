@@ -43,6 +43,12 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order): RedirectResponse
     {
+        if ($order->status === Order::STATUS_COMPLETED) {
+            return back()->withErrors([
+                'status' => 'Đơn hàng đã hoàn thành nên không thể thay đổi trạng thái.',
+            ]);
+        }
+
         $validated = $request->validate([
             'status' => ['required', Rule::in(array_keys(Order::statusOptions()))],
         ]);

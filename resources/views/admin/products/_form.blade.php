@@ -77,6 +77,15 @@
                 @enderror
             </div>
         </div>
+
+        <div class="space-y-2">
+            <label for="stock_quantity" class="text-sm font-medium text-slate-600">Stock quantity</label>
+            <input type="number" id="stock_quantity" name="stock_quantity" value="{{ old('stock_quantity', $stockQuantity ?? 0) }}" min="0" step="1" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
+            <p class="text-xs text-slate-500">If sizes are provided, stock will be distributed evenly by size.</p>
+            @error('stock_quantity')
+                <p class="text-sm text-rose-600">{{ $message }}</p>
+            @enderror
+        </div>
         <div class="space-y-2">
             <label for="short_description" class="text-sm font-medium text-slate-600">Short description</label>
             <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">{{ old('short_description', $product->short_description ?? '') }}</textarea>

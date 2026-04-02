@@ -7,10 +7,8 @@ use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\SalesReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\View\View;
 
@@ -29,20 +27,8 @@ class SalesReportController extends Controller
         $filters = $this->resolveFilters($request);
         $data = $this->buildReportData($filters);
         $series = $data['chartData'];
-        [$fromDate, $toDate, $periodLabel] = $this->resolvePeriodRange($filters['period'], $filters['reportDate']);
+        [, , $periodLabel] = $this->resolvePeriodRange($filters['period'], $filters['reportDate']);
         $fileName = 'bao-cao-ban-hang-' . $filters['period'] . '-' . $filters['reportDate']->format('Ymd_His') . '.csv';
-
-        SalesReport::create([
-            'report_type' => $filters['period'],
-            'from_date' => $fromDate,
-            'to_date' => $toDate,
-            'total_revenue' => $data['selectedRevenue'],
-            'total_sold' => $data['selectedSold'],
-            'total_stock' => $data['totalStock'],
-            'export_format' => 'excel',
-            'export_file_name' => $fileName,
-            'generated_by' => Auth::id(),
-        ]);
 
         return response()->streamDownload(function () use ($data, $series, $periodLabel) {
             $handle = fopen('php://output', 'w');
@@ -105,7 +91,7 @@ class SalesReportController extends Controller
             default => $this->buildDayRevenueSeries($filters['reportDate']),
         };
 
-        [$chartMin, $chartMax, $chartStep] = $this->resolveChartAxis($filters['period']);
+        [$chartMin, $chartMax, $chartStep] = $this->resolveChartAxis($filters['period'], $chartData);
 
         return [
             'selectedPeriod' => $filters['period'],
@@ -173,10 +159,6 @@ class SalesReportController extends Controller
         $inventoriesWithSize = $product->inventories->filter(fn ($inventory) => filled($inventory->size));
         $currentStock = (int) $product->inventories->sum('quantity');
 
-        if ($currentStock <= 0) {
-            $currentStock = (int) ($product->stock_quantity ?? 0);
-        }
-
         $product->stock_remaining = $currentStock;
 
         if ($inventoriesWithSize->isNotEmpty()) {
@@ -203,12 +185,19 @@ class SalesReportController extends Controller
         $product->size_stock_label = 'Free-size: ' . number_format($currentStock);
     }
 
-    private function resolveChartAxis(string $period): array
+    private function resolveChartAxis(string $period, array $chartData): array
     {
-        return match ($period) {
-            'month', 'year' => [0, 20_000_000, 4_000_000],
-            default => [0, null, null],
-        };
+        if (! in_array($period, ['month', 'year'], true)) {
+            return [0, null, null];
+        }
+
+        $step = $period === 'month' ? 5_000_000 : 50_000_000;
+        $baseMax = $step * 4;
+        $values = collect($chartData['values'] ?? [])->map(fn ($value) => (float) $value);
+        $maxValue = (float) ($values->max() ?? 0);
+        $scaledMax = $maxValue > 0 ? (int) (ceil($maxValue / $step) * $step) : 0;
+
+        return [0, max($baseMax, $scaledMax), $step];
     }
 
     private function resolveFilters(Request $request): array

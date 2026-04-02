@@ -16,7 +16,10 @@ class ProductController extends Controller
 {
     public function index(): View
     {
-        $products = Product::with(['category', 'brand'])->latest()->paginate(12);
+        $products = Product::with(['category', 'brand'])
+            ->withSum('inventories', 'quantity')
+            ->latest()
+            ->paginate(12);
 
         return view('admin.products.index', compact('products'));
     }
@@ -26,6 +29,7 @@ class ProductController extends Controller
         return view('admin.products.create', [
             'categories' => Category::orderBy('name')->get(),
             'brands' => Brand::orderBy('name')->get(),
+            'stockQuantity' => 0,
         ]);
     }
 
@@ -42,17 +46,21 @@ class ProductController extends Controller
         $data['is_new'] = $request->boolean('is_new');
         $data['is_sale'] = $request->boolean('is_sale');
 
-        Product::create($data);
+        $product = Product::create($data);
+        $this->syncStockQuantity($product, (int) ($data['stock_quantity'] ?? 0), $data['size_options'] ?? null);
 
         return redirect()->route('admin.products.index')->with('status', 'Product created.');
     }
 
     public function edit(Product $product): View
     {
+        $product->loadSum('inventories', 'quantity');
+
         return view('admin.products.edit', [
             'product' => $product,
             'categories' => Category::orderBy('name')->get(),
             'brands' => Brand::orderBy('name')->get(),
+            'stockQuantity' => (int) ($product->inventories_sum_quantity ?? 0),
         ]);
     }
 
@@ -73,6 +81,7 @@ class ProductController extends Controller
         $data['is_sale'] = $request->boolean('is_sale');
 
         $product->update($data);
+        $this->syncStockQuantity($product, (int) ($data['stock_quantity'] ?? 0), $data['size_options'] ?? null);
 
         return redirect()->route('admin.products.index')->with('status', 'Product updated.');
     }
@@ -102,6 +111,7 @@ class ProductController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0', 'lte:price'],
+            'stock_quantity' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', Rule::in(['draft', 'published', 'archived'])],
             'size_options' => ['nullable', 'string'],
             'is_trending' => ['sometimes', 'boolean'],
@@ -109,6 +119,35 @@ class ProductController extends Controller
             'is_sale' => ['sometimes', 'boolean'],
             'cover_image' => ['nullable', 'image', 'max:4096'],
         ]);
+    }
+
+    private function syncStockQuantity(Product $product, int $quantity, ?array $sizes): void
+    {
+        $sizes = collect($sizes ?? [])->filter()->map(fn ($size) => (string) $size)->values()->all();
+
+        if (empty($sizes)) {
+            $product->inventories()->whereNotNull('size')->delete();
+            $product->inventories()->updateOrCreate(
+                ['size' => null],
+                ['quantity' => max(0, $quantity)],
+            );
+            return;
+        }
+
+        $product->inventories()->whereNull('size')->delete();
+        $product->inventories()->whereNotNull('size')->whereNotIn('size', $sizes)->delete();
+
+        $sizeCount = count($sizes);
+        $perSize = $sizeCount > 0 ? intdiv(max(0, $quantity), $sizeCount) : 0;
+        $remainder = $sizeCount > 0 ? max(0, $quantity) % $sizeCount : 0;
+
+        foreach ($sizes as $index => $size) {
+            $sizeQuantity = $perSize + ($index < $remainder ? 1 : 0);
+            $product->inventories()->updateOrCreate(
+                ['size' => $size],
+                ['quantity' => $sizeQuantity],
+            );
+        }
     }
 
     private function prepareSizes(?string $sizes): ?array

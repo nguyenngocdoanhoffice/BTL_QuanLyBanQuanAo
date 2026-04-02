@@ -21,7 +21,7 @@
 
         <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="mt-8 space-y-8">
             @csrf
-            @include('admin.products._form', ['product' => null])
+            @include('admin.products._form', ['product' => null, 'stockQuantity' => $stockQuantity ?? 0])
 
             <div class="flex items-center justify-end gap-4">
                 <a href="{{ route('admin.products.index') }}" class="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:border-slate-900">Cancel</a>
