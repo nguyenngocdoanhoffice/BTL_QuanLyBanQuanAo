@@ -8,7 +8,7 @@
     <title>{{ trim(
         collect([
             trim($__env->yieldContent('title')),
-            'Admin · ' . config('app.name', 'QAO Shop'),
+            'Quản trị · ' . config('app.name', 'QAO Shop'),
         ])->filter()->join(' · ')
     ) }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -23,20 +23,20 @@
                     <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white font-bold">Q</span>
                     <span>QAO Admin</span>
                 </a>
-                <p class="mt-4 text-xs uppercase tracking-wide text-slate-500">Management</p>
+                <p class="mt-4 text-xs uppercase tracking-wide text-slate-500">Quản lý</p>
             </div>
             <nav class="flex-1 px-4 py-6 space-y-1 text-sm font-medium">
                 <a href="{{ route('admin.dashboard') }}" class="block rounded-xl px-4 py-3 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
-                    Dashboard
+                    Bảng điều khiển
                 </a>
                 <a href="{{ route('admin.products.index') }}" class="block rounded-xl px-4 py-3 {{ request()->routeIs('admin.products.*') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
-                    Products
+                    Sản phẩm
                 </a>
                 <a href="{{ route('admin.orders.index') }}" class="block rounded-xl px-4 py-3 {{ request()->routeIs('admin.orders.*') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
-                    Orders
+                    Đơn hàng
                 </a>
                 <a href="{{ route('admin.banners.index') }}" class="block rounded-xl px-4 py-3 {{ request()->routeIs('admin.banners.*') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
-                    Hero banners
+                    Banner trang chủ
                 </a>
             </nav>
             <div class="px-6 py-6 border-t border-slate-100 text-sm text-slate-500">
@@ -50,12 +50,12 @@
                 <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
                     <div>
                         <p class="text-xs uppercase tracking-wide text-slate-500">{{ now()->format('M d, Y') }}</p>
-                        <h1 class="text-xl font-semibold">@yield('header', 'Control Center')</h1>
+                        <h1 class="text-xl font-semibold">@yield('header', 'Trung tâm điều khiển')</h1>
                     </div>
                     <div class="flex items-center gap-3 text-sm">
                         <a href="{{ route('home') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-slate-600 hover:border-slate-900">
                             <span aria-hidden="true">↩</span>
-                            Storefront
+                            Về cửa hàng
                         </a>
                         <div class="relative" data-account-menu-root>
                             <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold uppercase text-white" data-account-menu-toggle aria-expanded="false" aria-controls="admin-account-menu">
