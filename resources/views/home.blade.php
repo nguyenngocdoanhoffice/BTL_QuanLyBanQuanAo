@@ -37,22 +37,117 @@ style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41
                     </div>
                 </dl>
             </div>
-            <div class="grid gap-4 md:grid-cols-2">
-                @php($heroTrending = $trending->take(4))
-                @forelse ($heroTrending as $product)
-                    @php($primaryImage = $product->cover_image ?: optional($product->images->first())->path)
-                    @php($cardImage = $primaryImage ? Storage::url($primaryImage) : 'https://placehold.co/600x400?text=DOCHA+San+pham')
-                    <a href="{{ route('products.show', $product) }}" class="relative flex h-60 items-end rounded-3xl bg-cover bg-center shadow-2xl" style="background-image: url('{{ $cardImage }}')">
-                        <div class="w-full rounded-3xl rounded-t-none bg-linear-to-t from-black/80 via-black/20 to-transparent p-4">
-                            <div class="mt-3 inline-flex items-center rounded-full bg-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white">Xem ngay</div>
-                        </div>
-                    </a>
-                @empty
+            <div class="relative">
+                @php($heroTrending = $trending->take(6))
+                @if ($heroTrending->isEmpty())
                     <div class="rounded-3xl bg-white/10 p-6 text-white/80">Chưa có sản phẩm trending.</div>
-                @endforelse
+                @else
+                    <div class="overflow-hidden rounded-3xl" data-hero-slider>
+                        <div class="flex transition-transform duration-500 ease-out" data-hero-slider-track>
+                            @foreach ($heroTrending as $product)
+                                @php($primaryImage = $product->cover_image ?: optional($product->images->first())->path)
+                                @php($cardImage = $primaryImage ? Storage::url($primaryImage) : 'https://placehold.co/1200x700?text=DOCHA+San+pham')
+                                <a href="{{ route('products.show', $product) }}" class="relative h-72 w-full shrink-0 bg-cover bg-center" style="background-image: url('{{ $cardImage }}')">
+                                    <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent"></div>
+                                    <div class="relative flex h-full items-end p-6">
+                                        <div>
+                                            <p class="text-xs uppercase tracking-[0.3em] text-white/70">Trending</p>
+                                            <h3 class="mt-2 text-2xl font-semibold">{{ $product->title }}</h3>
+                                            <div class="mt-3 inline-flex items-center rounded-full bg-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white">Xem ngay</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <button type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white hover:bg-white/30" data-hero-slider-prev aria-label="Truoc">
+                        <span aria-hidden="true">‹</span>
+                    </button>
+                    <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white hover:bg-white/30" data-hero-slider-next aria-label="Tiep">
+                        <span aria-hidden="true">›</span>
+                    </button>
+
+                    <div class="mt-4 flex items-center justify-center gap-2" data-hero-slider-dots>
+                        @foreach ($heroTrending as $index => $product)
+                            <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/30 transition" data-hero-slider-dot data-index="{{ $index }}" aria-label="Slide {{ $index + 1 }}"></button>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </section>
+
+    @if ($heroTrending->isNotEmpty())
+        @push('scripts')
+            <script>
+                (() => {
+                    const slider = document.querySelector('[data-hero-slider]');
+                    const track = document.querySelector('[data-hero-slider-track]');
+                    const prevButton = document.querySelector('[data-hero-slider-prev]');
+                    const nextButton = document.querySelector('[data-hero-slider-next]');
+                    const dots = Array.from(document.querySelectorAll('[data-hero-slider-dot]'));
+
+                    if (!slider || !track || dots.length === 0) {
+                        return;
+                    }
+
+                    let index = 0;
+                    let timerId = null;
+
+                    const goTo = (nextIndex) => {
+                        index = (nextIndex + dots.length) % dots.length;
+                        const slideWidth = slider.clientWidth;
+                        track.style.transform = `translateX(-${slideWidth * index}px)`;
+                        dots.forEach((dot, i) => {
+                            dot.classList.toggle('bg-white', i === index);
+                            dot.classList.toggle('bg-white/30', i !== index);
+                        });
+                    };
+
+                    const startAuto = () => {
+                        stopAuto();
+                        timerId = window.setInterval(() => goTo(index + 1), 4500);
+                    };
+
+                    const stopAuto = () => {
+                        if (timerId) {
+                            window.clearInterval(timerId);
+                            timerId = null;
+                        }
+                    };
+
+                    dots.forEach((dot) => {
+                        dot.addEventListener('click', () => {
+                            const target = Number(dot.getAttribute('data-index'));
+                            if (!Number.isNaN(target)) {
+                                goTo(target);
+                                startAuto();
+                            }
+                        });
+                    });
+
+                    prevButton?.addEventListener('click', () => {
+                        goTo(index - 1);
+                        startAuto();
+                    });
+
+                    nextButton?.addEventListener('click', () => {
+                        goTo(index + 1);
+                        startAuto();
+                    });
+
+                    window.addEventListener('resize', () => goTo(index), { passive: true });
+
+                    goTo(0);
+                    startAuto();
+
+                    slider.addEventListener('mouseenter', stopAuto);
+                    slider.addEventListener('mouseleave', startAuto);
+                })();
+            </script>
+        @endpush
+    @endif
 
     <section id="trending" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
         <div class="flex flex-wrap items-center justify-between gap-4">
