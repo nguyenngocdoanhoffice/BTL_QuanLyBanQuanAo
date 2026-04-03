@@ -28,49 +28,67 @@ class SalesReportController extends Controller
         $data = $this->buildReportData($filters);
         $series = $data['chartData'];
         [, , $periodLabel] = $this->resolvePeriodRange($filters['period'], $filters['reportDate']);
-        $fileName = 'bao-cao-ban-hang-' . $filters['period'] . '-' . $filters['reportDate']->format('Ymd_His') . '.csv';
+        $fileName = 'bao-cao-ban-hang-' . $filters['period'] . '-' . $filters['reportDate']->format('Ymd_His') . '.xls';
 
         return response()->streamDownload(function () use ($data, $series, $periodLabel) {
-            $handle = fopen('php://output', 'w');
-            fwrite($handle, "\xEF\xBB\xBF");
+            $borderStyle = 'border:1px solid #111;padding:6px;';
+            $headerStyle = $borderStyle . 'font-weight:bold;background:#f1f5f9;';
 
-            fputcsv($handle, ['Bao cao ban hang']);
-            fputcsv($handle, ['Loai bao cao', $periodLabel]);
-            fputcsv($handle, ['Ngay xuat', now()->format('d/m/Y H:i:s')]);
-            fputcsv($handle, []);
+            echo '<html><head><meta charset="UTF-8"></head><body>';
 
-            fputcsv($handle, ['Tong quan doanh thu']);
-            fputcsv($handle, ['Doanh thu da chon', (float) $data['selectedRevenue']]);
-            fputcsv($handle, []);
+            echo '<table style="border-collapse:collapse;width:100%;">';
+            echo '<tr><td style="' . $headerStyle . '" colspan="2">Báo cáo bán hàng</td></tr>';
+            echo '<tr><td style="' . $borderStyle . '">Loại báo cáo</td><td style="' . $borderStyle . '">' . e($periodLabel) . '</td></tr>';
+            echo '<tr><td style="' . $borderStyle . '">Ngày xuất</td><td style="' . $borderStyle . '">' . now()->format('d/m/Y H:i:s') . '</td></tr>';
+            echo '</table><br>';
 
-            fputcsv($handle, ['So luong da ban']);
-            fputcsv($handle, ['Da ban da chon', (int) $data['selectedSold']]);
-            fputcsv($handle, ['Tong da ban', (int) $data['totalSold']]);
-            fputcsv($handle, ['Tong ton kho', (int) $data['totalStock']]);
-            fputcsv($handle, []);
+            echo '<table style="border-collapse:collapse;width:100%;">';
+            echo '<tr><td style="' . $headerStyle . '" colspan="2">Tổng quan doanh thu</td></tr>';
+            echo '<tr><td style="' . $borderStyle . '">Doanh thu đã chọn</td><td style="' . $borderStyle . '">' . number_format((float) $data['selectedRevenue'], 0, ',', '.') . ' đ</td></tr>';
+            echo '</table><br>';
 
-            fputcsv($handle, ['Doanh thu chi tiet theo ky']);
-            fputcsv($handle, ['Ky', 'Doanh thu']);
+            echo '<table style="border-collapse:collapse;width:100%;">';
+            echo '<tr><td style="' . $headerStyle . '" colspan="2">Số lượng đã bán</td></tr>';
+            echo '<tr><td style="' . $borderStyle . '">Đã bán đã chọn</td><td style="' . $borderStyle . '">' . (int) $data['selectedSold'] . '</td></tr>';
+            echo '<tr><td style="' . $borderStyle . '">Tổng đã bán</td><td style="' . $borderStyle . '">' . (int) $data['totalSold'] . '</td></tr>';
+            echo '<tr><td style="' . $borderStyle . '">Tổng tồn kho</td><td style="' . $borderStyle . '">' . (int) $data['totalStock'] . '</td></tr>';
+            echo '</table><br>';
+
+            echo '<table style="border-collapse:collapse;width:100%;">';
+            echo '<tr><td style="' . $headerStyle . '" colspan="2">Doanh thu chi tiết theo kỳ</td></tr>';
+            echo '<tr><td style="' . $headerStyle . '">Kỳ</td><td style="' . $headerStyle . '">Doanh thu</td></tr>';
             foreach (($series['labels'] ?? []) as $index => $label) {
-                fputcsv($handle, [$label, (float) (($series['values'] ?? [])[$index] ?? 0)]);
+                $value = (float) (($series['values'] ?? [])[$index] ?? 0);
+                echo '<tr>';
+                echo '<td style="' . $borderStyle . '">' . e($label) . '</td>';
+                echo '<td style="' . $borderStyle . '">' . number_format($value, 0, ',', '.') . ' đ</td>';
+                echo '</tr>';
             }
-            fputcsv($handle, []);
+            echo '</table><br>';
 
-            fputcsv($handle, ['Bao cao theo san pham']);
-            fputcsv($handle, ['Ten san pham', 'SKU', 'Da ban', 'Ton kho hien tai', 'Ton kho theo size']);
+            echo '<table style="border-collapse:collapse;width:100%;">';
+            echo '<tr><td style="' . $headerStyle . '" colspan="5">Báo cáo theo sản phẩm</td></tr>';
+            echo '<tr>';
+            echo '<td style="' . $headerStyle . '">Tên sản phẩm</td>';
+            echo '<td style="' . $headerStyle . '">SKU</td>';
+            echo '<td style="' . $headerStyle . '">Đã bán</td>';
+            echo '<td style="' . $headerStyle . '">Tồn kho hiện tại</td>';
+            echo '<td style="' . $headerStyle . '">Tồn kho theo size</td>';
+            echo '</tr>';
             foreach ($data['productReports'] as $product) {
-                fputcsv($handle, [
-                    $product->title,
-                    $product->sku,
-                    (int) ($product->sold_quantity ?? 0),
-                    (int) ($product->stock_remaining ?? 0),
-                    (string) ($product->size_stock_label ?? ''),
-                ]);
+                echo '<tr>';
+                echo '<td style="' . $borderStyle . '">' . e($product->title) . '</td>';
+                echo '<td style="' . $borderStyle . '">' . e($product->sku) . '</td>';
+                echo '<td style="' . $borderStyle . '">' . (int) ($product->sold_quantity ?? 0) . '</td>';
+                echo '<td style="' . $borderStyle . '">' . (int) ($product->stock_remaining ?? 0) . '</td>';
+                echo '<td style="' . $borderStyle . '">' . e((string) ($product->size_stock_label ?? '')) . '</td>';
+                echo '</tr>';
             }
+            echo '</table>';
 
-            fclose($handle);
+            echo '</body></html>';
         }, $fileName, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
         ]);
     }
 
