@@ -8,7 +8,7 @@
 
         $heroBackground = $heroBanner? Storage::url($heroBanner->image_path) : null;
     @endphp
-<section class="bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 text-white"
+<section class="relative z-0 bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 text-white"
 @if ($heroBackground)
 style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41,59,0.85)), url('{{ $heroBackground }}'); background-size: cover; background-position: center;"
 @endif>        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 grid gap-10 lg:grid-cols-[1.1fr,0.9fr] items-center">
@@ -37,7 +37,7 @@ style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41
                     </div>
                 </dl>
             </div>
-            <div class="relative">
+            <div class="relative z-0">
                 @php($heroTrending = $trending->take(6))
                 @if ($heroTrending->isEmpty())
                     <div class="rounded-3xl bg-white/10 p-6 text-white/80">Chưa có sản phẩm trending.</div>
@@ -61,10 +61,10 @@ style="background-image: linear-gradient(180deg, rgba(15,23,42,0.75), rgba(30,41
                         </div>
                     </div>
 
-                    <button type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white hover:bg-white/30" data-hero-slider-prev aria-label="Truoc">
+                    <button type="button" class="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white hover:bg-white/30" data-hero-slider-prev aria-label="Truoc">
                         <span aria-hidden="true">‹</span>
                     </button>
-                    <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white hover:bg-white/30" data-hero-slider-next aria-label="Tiep">
+                    <button type="button" class="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white hover:bg-white/30" data-hero-slider-next aria-label="Tiep">
                         <span aria-hidden="true">›</span>
                     </button>
 
