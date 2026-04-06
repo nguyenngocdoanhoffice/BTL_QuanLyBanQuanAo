@@ -38,7 +38,7 @@ class DiscountController extends Controller
         Discount::create([
             ...$data,
             'product_id' => null,
-            'code' => Str::upper(trim($data['code'])),
+            'code' => $data['code'],
             'is_active' => $request->boolean('is_active'),
         ]);
 
@@ -61,7 +61,7 @@ class DiscountController extends Controller
         $discount->update([
             ...$data,
             'product_id' => null,
-            'code' => Str::upper(trim($data['code'])),
+            'code' => $data['code'],
             'is_active' => $request->boolean('is_active'),
         ]);
 

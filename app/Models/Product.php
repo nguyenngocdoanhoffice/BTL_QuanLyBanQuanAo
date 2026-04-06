@@ -77,6 +77,11 @@ class Product extends Model
         return $query->where('status', 'published');
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected function finalPrice(): Attribute
     {
         return Attribute::make(

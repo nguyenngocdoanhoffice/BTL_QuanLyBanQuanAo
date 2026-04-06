@@ -53,7 +53,7 @@
                                     <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-600">{{ $order->status_label }}</span>
                                 </td>
                                 <td class="py-3 font-semibold">{{ number_format($order->total, 0, '.', ',') }} VND</td>
-                                <td class="py-3">{{ $order->created_at->format('M d, Y') }}</td>
+                                <td class="py-3">{{ $order->created_at->format('d/m/Y') }}</td>
                             </tr>
                         @empty
                             <tr>

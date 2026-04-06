@@ -55,11 +55,11 @@ class CheckoutController extends Controller
             'discount_code' => ['required', 'string', 'max:50'],
         ]);
 
-        $code = Str::upper(trim($data['discount_code']));
+        $code = $this->normalizeDiscountCode($data['discount_code']);
 
         $discount = Discount::query()
             ->whereNull('product_id')
-            ->where('code', $code)
+            ->whereRaw('upper(code) = ?', [$code])
             ->active()
             ->first();
 
@@ -107,7 +107,7 @@ class CheckoutController extends Controller
         $user = Auth::user();
         $sessionCode = session('checkout.discount_code');
         $requestCode = $data['discount_code'] ? Str::upper(trim($data['discount_code'])) : null;
-        $discountCode = $requestCode ?: $sessionCode;
+        $discountCode = $requestCode ? $this->normalizeDiscountCode($requestCode) : $sessionCode;
 
         $checkout = $this->computeCheckoutTotals($totals, $discountCode);
 
@@ -190,7 +190,7 @@ class CheckoutController extends Controller
         if ($discountCode) {
             $discount = Discount::query()
                 ->whereNull('product_id')
-                ->where('code', $discountCode)
+                ->whereRaw('upper(code) = ?', [$discountCode])
                 ->active()
                 ->first();
 
@@ -207,5 +207,11 @@ class CheckoutController extends Controller
             'shipping_fee' => $shippingFee,
             'order_total' => max((float) $cart['subtotal'] - $discountTotal + $shippingFee, 0),
         ];
+    }
+
+    private function normalizeDiscountCode(string $code): string
+    {
+        $normalized = preg_replace('/\s+/', '', $code);
+        return Str::upper(trim((string) $normalized));
     }
 }
